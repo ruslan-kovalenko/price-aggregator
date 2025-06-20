@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { SilpoScraper } from './silpo.scraper';
-import { PaginatedScraperRunner } from 'src/scrapers/paginated-scraper.runner';
+import { PaginatedScraperRunner } from '../paginated-scraper.runner';
+import { AtbScraper } from './atb.scraper';
 import { Product } from 'src/products/types/product/product';
 
 @Injectable()
-export class SilpoService {
+export class AtbService {
   constructor(
     private readonly runner: PaginatedScraperRunner,
-    private readonly scraper: SilpoScraper,
+    private readonly scraper: AtbScraper,
   ) {}
 
   async getProducts(input: string): Promise<Product[]> {

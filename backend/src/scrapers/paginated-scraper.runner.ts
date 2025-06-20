@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from '../types/product/product';
-import { ICategoryScraper } from '../../scrapers/category-scraper.interface';
+import { Product } from '../products/types/product/product';
+import { ICategoryScraper } from './category-scraper.interface';
 
 @Injectable()
 export class PaginatedScraperRunner {
@@ -14,7 +14,7 @@ export class PaginatedScraperRunner {
     while (!ended) {
       const batch = Array.from({ length: this.parallel }, (_, i) => page + i);
       const results = await Promise.all(
-        batch.map((p) => scraper.scrapeCategoryPage(p, input)),
+        batch.map((p) => scraper.scrapeCategoryPage(input)),
       );
 
       for (const products of results) {
