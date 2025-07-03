@@ -57,12 +57,19 @@ export class AtbScraper implements ICategoryScraper {
             .replace(/\s/g, '')
             .trim();
 
+          const discountRaw = discount.textContent
+            ?.trim()
+            .split('\n')[0]
+            .replace('%', '')
+            .trim();
+          const discountNumber = discountRaw.match(/-?\d+/);
+
           return {
             name: titleEl?.textContent?.trim() || null,
             price: parseFloat(priceEl) || null,
             oldPrice: parseFloat(oldPriceEl) || null,
             link: `${baseUrl}${linkEl}`,
-            discount: discount.textContent?.trim(),
+            discount: discountNumber ? discountNumber[0] : 0,
           };
         });
       },

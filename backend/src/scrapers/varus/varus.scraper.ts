@@ -48,12 +48,18 @@ export class VarusScraper implements ICategoryScraper {
             .replace(/\s/g, '')
             .trim();
 
+          const discountNumber = discount.textContent
+            ?.trim()
+            .split('\n')[0]
+            .replace('%', '')
+            .trim();
+
           return {
             name: titleEl?.textContent?.trim() || null,
             link: linkEl?.getAttribute('href')
               ? `${baseUrl}${linkEl.getAttribute('href')}`
               : null,
-            discount: discount.textContent?.trim().split('\n')[0].trim(),
+            discount: discountNumber,
             price: parseFloat(priceEl) || null,
             oldPrice: parseFloat(oldPriceEl) || null,
           };
@@ -63,6 +69,6 @@ export class VarusScraper implements ICategoryScraper {
       baseUrl,
     );
 
-    return products.filter((product) => product) as any;
+    return products.filter((product) => product);
   }
 }

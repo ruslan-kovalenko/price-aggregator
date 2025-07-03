@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MaudauScraper } from './maudau.scraper';
 import { PaginatedScraperRunner } from 'src/scrapers/paginated-scraper.runner';
 import { Product } from 'src/products/types/product/product';
+import { ScrapperHelper } from '../scrapper-helper';
 
 @Injectable()
 export class MaudauService {
@@ -11,6 +12,6 @@ export class MaudauService {
   ) {}
 
   async getProducts(input: string): Promise<Product[]> {
-    return await this.scraper.scrapeCategoryPage(input);
+    return ScrapperHelper.sortScrapped(this.scraper, input);
   }
 }

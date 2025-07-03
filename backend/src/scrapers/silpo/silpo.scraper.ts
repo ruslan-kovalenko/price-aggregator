@@ -38,6 +38,13 @@ export class SilpoScraper implements ICategoryScraper {
           if (!titleEl || !titleEl.textContent.toLowerCase().includes(input))
             return acc;
 
+          const discountNumber = discount.textContent
+            ?.trim()
+            .split('\n')[0]
+            .replace('%', '')
+            .trim()
+            .replace(' ', '');
+
           const linkEl = item.querySelector('a');
           const priceEl = item
             .querySelector('.product-card-price__displayPrice')
@@ -57,7 +64,7 @@ export class SilpoScraper implements ICategoryScraper {
             link: linkEl?.getAttribute('href')
               ? `${baseUrl}${linkEl.getAttribute('href')}`
               : null,
-            discount: discount.textContent?.trim(),
+            discount: discountNumber,
           });
 
           return acc;

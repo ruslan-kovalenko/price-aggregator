@@ -3,5 +3,5 @@ export type Product = {
   link: string;
   oldPrice: number;
   price: number;
-  discount: string;
+  discount: string | number;
 };

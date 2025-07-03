@@ -26,7 +26,9 @@ export class MaudauScraper implements ICategoryScraper {
 
         const discount = $(element)
           .find('[data-testid="productDiscount"]')
-          .text();
+          .text()
+          .replace('%', '');
+
         if (!discount) return acc;
 
         const productName = $(element)

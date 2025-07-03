@@ -16,7 +16,7 @@ import axios from 'axios';
 
 const requestCallback = async (input: string): Promise<any> => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const data = await fetch(`${apiUrl}/products?input=beer`);
+  const data = await fetch(`${apiUrl}/products?input=${input}`);
   console.log(await data.json());
 }
 </script>
