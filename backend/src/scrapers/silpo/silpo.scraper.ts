@@ -1,42 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ICategoryScraper } from '../category-scraper.interface';
-import puppeteer from 'puppeteer';
 import { Product } from 'src/products/types/product/product';
+import { scrapperWrapper } from '../scrapper.wrapper';
 
 @Injectable()
 export class SilpoScraper implements ICategoryScraper {
   constructor(private configService: ConfigService) {}
 
   async scrapeCategoryPage(input: string): Promise<Product[]> {
-    const baseUrl = this.configService.get<string>('SILPO_URL');
-    const query = new URLSearchParams({ find: input }).toString();
-
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-
-    const url = `${baseUrl}/search?${query}`;
-    await page.goto(url, { waitUntil: 'networkidle2' });
-
-    await page.waitForSelector('shop-silpo-common-product-card', {
-      timeout: 10000,
-    });
-
-    const products = await page.evaluate(
-      (input: string, baseUrl: string) => {
+    return scrapperWrapper(
+      this.configService,
+      input,
+      {
+        baseUrlName: 'SILPO_URL',
+        searchParam: 'find',
+        searchUrlPrefix: 'search',
+        waitForSelector: 'shop-silpo-common-product-card',
+      },
+      (input, baseUrl) => {
         const items = Array.from(
           document.querySelectorAll('shop-silpo-common-product-card'),
         );
 
-        return items.reduce((acc, item) => {
+        return items.reduce<Product[]>((acc, item) => {
           if (acc.length >= 10) return acc;
 
           const discount = item.querySelector('.product-card-price__sale');
           if (!discount) return acc;
 
           const titleEl = item.querySelector('.product-card__title');
-          if (!titleEl || !titleEl.textContent.toLowerCase().includes(input))
+          if (
+            !titleEl ||
+            !titleEl.textContent.toLowerCase().includes(input.toLowerCase())
+          ) {
             return acc;
+          }
 
           const discountNumber = discount.textContent
             ?.trim()
@@ -44,6 +43,9 @@ export class SilpoScraper implements ICategoryScraper {
             .replace('%', '')
             .trim()
             .replace(' ', '');
+          const volume = item.querySelector(
+            '.ft-flex.ft-justify-between .ft-typo-14-semibold',
+          );
 
           const linkEl = item.querySelector('a');
           const priceEl = item
@@ -58,7 +60,9 @@ export class SilpoScraper implements ICategoryScraper {
             .trim();
 
           acc.push({
-            name: titleEl?.textContent?.trim() || null,
+            name:
+              `${titleEl?.textContent?.trim()} ${volume ? volume.textContent?.trim() : ''}` ||
+              null,
             price: parseFloat(priceEl) || null,
             oldPrice: parseFloat(oldPriceEl) || null,
             link: linkEl?.getAttribute('href')
@@ -70,10 +74,6 @@ export class SilpoScraper implements ICategoryScraper {
           return acc;
         }, []);
       },
-      input,
-      baseUrl,
     );
-
-    return products.filter((product) => product);
   }
 }

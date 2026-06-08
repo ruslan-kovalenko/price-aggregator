@@ -3,15 +3,12 @@
     <input
       type="text"
       name="request"
-      placeholder="наприклад: пиво"
       v-model="inputRequest"
       @keyup.enter="executeRequest"
       :disabled="loading"
     />
     <img v-if="loading" src="@/assets/spinner.gif" alt="spinner" />
-    <figcaption>
-      Введіть категорію товару, або найменування для здійснення пошуку
-    </figcaption>
+    <figcaption>Введіть категорію товару, або найменування для здійснення пошуку</figcaption>
   </figure>
 </template>
 
@@ -23,9 +20,9 @@ const loading = ref(false)
 
 const props = defineProps({
   callback: {
-    type: Function as PropType<Object>,
-    required: true
-  }
+    type: Function as PropType<object>,
+    required: true,
+  },
 })
 
 const executeRequest = async () => {
@@ -33,22 +30,17 @@ const executeRequest = async () => {
   const result = await props.callback(inputRequest.value)
 
   if (result) {
-
   }
 
   loading.value = false
-}
-
-const unsetResultOpacity = () => {
 }
 </script>
 
 <style lang="scss" scoped>
 figure {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
 
   .success-message {
     font-size: 1.3rem;
@@ -59,7 +51,8 @@ figure {
   }
 
   input {
-    width: 80vw;
+    // width: clamp(20rem, 80vw, 80rem);
+    width: 100%;
     min-height: 90px;
     opacity: 0.9;
     outline: none;
@@ -68,6 +61,7 @@ figure {
     color: #000;
     font-size: 2.2rem;
     padding: 0px 20px;
+    box-sizing: border-box;
 
     &::placeholder {
       color: #726363;
@@ -85,12 +79,6 @@ figure {
     margin-top: 10px;
     font-style: italic;
     color: #000;
-  }
-}
-
-@media (max-width: 767px) {
-  figure input {
-    width: 96vw;
   }
 }
 </style>
